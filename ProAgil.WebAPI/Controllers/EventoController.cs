@@ -1,8 +1,12 @@
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ProAgil.WebAPI.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProAgil.WebAPI.Controllers
 {
@@ -19,21 +23,30 @@ namespace ProAgil.WebAPI.Controllers
             this._context = context;
         }
 
-        private List<Evento> Eventos()
-        {
-            return _context.Eventos.ToList();
-        }
-
         [HttpGet]
-        public ActionResult<IEnumerable<Evento>> Get()
+        public async Task<IActionResult> Get()
         {
-            return Eventos();
+            try
+            {
+                return Ok(await _context.Eventos.ToListAsync());
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Evento> GetAction(int id)
+        public async Task<IActionResult> GetAction(int id)
         {
-            return Eventos().FirstOrDefault(x => x.EventoId == id);
+            try
+            {
+                return Ok(await _context.Eventos.FirstOrDefaultAsync(x => x.EventoId == id));
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
     }
 }
