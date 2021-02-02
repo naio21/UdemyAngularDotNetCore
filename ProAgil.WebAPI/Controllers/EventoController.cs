@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProAgil.WebAPI.Model;
+using ProAgil.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +15,9 @@ namespace ProAgil.WebAPI.Controllers
     public class EventoController : ControllerBase
     {
         private readonly ILogger<EventoController> _logger;
-        private readonly DataContext _context;
+        private readonly ProAgilContext _context;
 
-        public EventoController(ILogger<EventoController> logger, DataContext context)
+        public EventoController(ILogger<EventoController> logger, ProAgilContext context)
         {
             this._logger = logger;
             this._context = context;
@@ -41,7 +41,7 @@ namespace ProAgil.WebAPI.Controllers
         {
             try
             {
-                return Ok(await _context.Eventos.FirstOrDefaultAsync(x => x.EventoId == id));
+                return Ok(await _context.Eventos.FirstOrDefaultAsync(x => x.Id == id));
             }
             catch(Exception ex)
             {
