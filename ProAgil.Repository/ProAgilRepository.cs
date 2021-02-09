@@ -11,6 +11,7 @@ namespace ProAgil.Repository
         public ProAgilRepository(ProAgilContext dbContext)
         {
             this._dbContext = dbContext;
+            _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTrackingWithIdentityResolution;
         }
 
         public void Add<T>(T entity) where T : class
