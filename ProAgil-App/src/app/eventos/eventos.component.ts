@@ -1,4 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Evento } from '../models/Evento';
 import { EventoService } from '../services/evento.service';
@@ -17,6 +18,7 @@ export class EventosComponent implements OnInit {
   imagemMargem = 2;
   mostrarImagem = false;
   modalRef!: BsModalRef;
+  registerForm!: FormGroup;
   
   _filtroLista = '';
   get filtroLista(): string {
@@ -32,6 +34,7 @@ export class EventosComponent implements OnInit {
   constructor(private eventoService: EventoService, private modalService: BsModalService) {}
 
   ngOnInit() {
+    this.validation();
     this.getEventos();
   }
 
@@ -39,6 +42,26 @@ export class EventosComponent implements OnInit {
     this.modalRef = this.modalService.show(template);
   }
 
+  validation() {
+    this.registerForm = new FormGroup({
+      tema: new FormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]),
+      local: new FormControl('', Validators.required),
+      dataEvento: new FormControl('', Validators.required),
+      qtdPessoas: new FormControl('', [Validators.required, Validators.max(120000)]),
+      imagemURL: new FormControl('', Validators.required),
+      telefone: new FormControl('', Validators.required),
+      email: new FormControl('', [Validators.required, Validators.email])
+    });
+  }
+
+  salvarAlteracao() {
+
+  }
+
+  alternarImagem() {
+    this.mostrarImagem = !this.mostrarImagem;
+  }
+  
   getEventos() {
     this.eventoService.getEventos().subscribe(
       (eventos: Evento[]) => {
@@ -56,9 +79,5 @@ export class EventosComponent implements OnInit {
       (evento: { tema: string }) =>
         evento.tema.toLocaleLowerCase().indexOf(filtro) !== -1
     );
-  }
-
-  alternarImagem() {
-    this.mostrarImagem = !this.mostrarImagem;
   }
 }
