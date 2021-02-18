@@ -33,7 +33,7 @@ export class EventosComponent implements OnInit {
 
   constructor(private eventoService: EventoService, private modalService: BsModalService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.validation();
     this.getEventos();
   }
