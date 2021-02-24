@@ -22,4 +22,8 @@ export class EventoService {
   getEventoByTema(tema: string): Observable<Evento[]> {
     return this.http.get<Evento[]>(`${this.baseUrl}/getByTema/&(tema)`);
   }
+
+  postEvento(evento: Evento): Observable<Evento> {
+    return this.http.post<Evento>(this.baseUrl, evento);
+}
 }

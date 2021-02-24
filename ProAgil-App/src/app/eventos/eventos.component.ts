@@ -1,8 +1,12 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { Evento } from '../models/Evento';
 import { EventoService } from '../services/evento.service';
+import { BsLocaleService } from 'ngx-bootstrap/datepicker';
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import { ptBrLocale } from 'ngx-bootstrap/locale';
+defineLocale('pt-br', ptBrLocale);
 
 @Component({
   selector: 'app-eventos',
@@ -13,11 +17,11 @@ import { EventoService } from '../services/evento.service';
 export class EventosComponent implements OnInit {
 
   eventos!: Evento[];
+  evento!: Evento;
   eventosFiltrados!: Evento[];
   imagemLargura = 50;
   imagemMargem = 2;
   mostrarImagem = false;
-  modalRef!: BsModalRef;
   registerForm!: FormGroup;
   
   _filtroLista = '';
@@ -31,15 +35,19 @@ export class EventosComponent implements OnInit {
       : this.eventos;
   }
 
-  constructor(private eventoService: EventoService, private modalService: BsModalService) {}
+  constructor(private eventoService: EventoService, private modalService: BsModalService, private localeService: BsLocaleService) 
+  {
+    this.localeService.use('pt-br');
+  }
 
   ngOnInit(): void {
     this.validation();
     this.getEventos();
   }
 
-  openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template);
+  openModal(template: any) {
+    this.registerForm.reset();
+    template.show();
   }
 
   validation() {
@@ -54,8 +62,20 @@ export class EventosComponent implements OnInit {
     });
   }
 
-  salvarAlteracao() {
-
+  salvarAlteracao(template: any) {
+    if (this.registerForm.valid) {
+      this.evento = Object.assign({}, this.registerForm.value);
+      this.eventoService.postEvento(this.evento).subscribe(
+        (novoEvento: Evento) => {
+          this.evento = novoEvento;
+          console.log(novoEvento);
+          template.hide();
+          this.getEventos();
+        }, error => {
+          console.log(error);
+        }
+      );
+    }
   }
 
   alternarImagem() {
@@ -66,6 +86,7 @@ export class EventosComponent implements OnInit {
     this.eventoService.getEventos().subscribe(
       (eventos: Evento[]) => {
         this.eventos = eventos;
+        this.eventosFiltrados = this.eventos;
       },
       (error) => {
         console.log(error);
