@@ -13,17 +13,17 @@ defineLocale('pt-br', ptBrLocale);
   templateUrl: './eventos.component.html',
   styleUrls: ['./eventos.component.css'],
 })
-
 export class EventosComponent implements OnInit {
-
   eventos!: Evento[];
   evento!: Evento;
+  modoSalvar = '';
+  bodyDeletarEvento = '';
   eventosFiltrados!: Evento[];
   imagemLargura = 50;
   imagemMargem = 2;
   mostrarImagem = false;
   registerForm!: FormGroup;
-  
+
   _filtroLista = '';
   get filtroLista(): string {
     return this._filtroLista;
@@ -35,14 +35,29 @@ export class EventosComponent implements OnInit {
       : this.eventos;
   }
 
-  constructor(private eventoService: EventoService, private modalService: BsModalService, private localeService: BsLocaleService) 
-  {
+  constructor(
+    private eventoService: EventoService,
+    private modalService: BsModalService,
+    private localeService: BsLocaleService
+  ) {
     this.localeService.use('pt-br');
   }
 
   ngOnInit(): void {
     this.validation();
     this.getEventos();
+  }
+
+  editarEvento(template: any, evento: Evento) {
+    this.modoSalvar = 'put';
+    this.openModal(template);
+    this.evento = evento;
+    this.registerForm.patchValue(evento);
+  }
+
+  novoEvento(template: any, evento: Evento) {
+    this.modoSalvar = 'post';
+    this.openModal(template);
   }
 
   openModal(template: any) {
@@ -52,36 +67,76 @@ export class EventosComponent implements OnInit {
 
   validation() {
     this.registerForm = new FormGroup({
-      tema: new FormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]),
+      tema: new FormControl('', [
+        Validators.required,
+        Validators.minLength(4),
+        Validators.maxLength(50),
+      ]),
       local: new FormControl('', Validators.required),
       dataEvento: new FormControl('', Validators.required),
-      qtdPessoas: new FormControl('', [Validators.required, Validators.max(120000)]),
+      qtdPessoas: new FormControl('', [
+        Validators.required,
+        Validators.max(120000),
+      ]),
       imagemURL: new FormControl('', Validators.required),
       telefone: new FormControl('', Validators.required),
-      email: new FormControl('', [Validators.required, Validators.email])
+      email: new FormControl('', [Validators.required, Validators.email]),
     });
   }
 
   salvarAlteracao(template: any) {
     if (this.registerForm.valid) {
-      this.evento = Object.assign({}, this.registerForm.value);
-      this.eventoService.postEvento(this.evento).subscribe(
-        (novoEvento: Evento) => {
-          this.evento = novoEvento;
-          console.log(novoEvento);
-          template.hide();
-          this.getEventos();
-        }, error => {
-          console.log(error);
-        }
-      );
+      if (this.modoSalvar === 'put') {
+        this.evento = Object.assign(
+          { id: this.evento.id },
+          this.registerForm.value
+        );
+        this.eventoService.putEvento(this.evento).subscribe(
+          () => {
+            template.hide();
+            this.getEventos();
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      } else {
+        this.evento = Object.assign({}, this.registerForm.value);
+        this.eventoService.postEvento(this.evento).subscribe(
+          () => {
+            template.hide();
+            this.getEventos();
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      }
     }
+  }
+
+  excluirEvento(evento: Evento, template: any) {
+    template.show();
+    this.evento = evento;
+    this.bodyDeletarEvento = `Tem certeza que deseja excluir o Evento: ${evento.tema}, Código: ${evento.id}`;
+  }
+
+  confirmeDelete(template: any) {
+    this.eventoService.deleteEvento(this.evento.id).subscribe(
+      () => {
+        template.hide();
+        this.getEventos();
+      },
+      (error : any) => {
+        console.log(error);
+      }
+    );
   }
 
   alternarImagem() {
     this.mostrarImagem = !this.mostrarImagem;
   }
-  
+
   getEventos() {
     this.eventoService.getEventos().subscribe(
       (eventos: Evento[]) => {
