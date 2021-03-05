@@ -41,7 +41,7 @@ namespace ProAgil.Repository
             {
                 eventos = eventos.Include(pe => pe.PalestranteEventos).ThenInclude(p => p.Palestrante);
             }
-            return eventos.OrderByDescending(d => d.DataEvento);
+            return eventos.OrderBy(d => d.Id);
         }
 
         public async Task<Evento[]> GetAllEventosAsync(bool incluirPalestrantes = false)
