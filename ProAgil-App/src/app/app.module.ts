@@ -10,6 +10,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { ToastrModule } from 'ngx-toastr';
 // Components
 import { AppComponent } from './app.component';
 import { EventosComponent } from './eventos/eventos.component';
@@ -34,6 +35,10 @@ import { EventoService } from './services/evento.service';
     TooltipModule.forRoot(),
     ModalModule.forRoot(),
     BsDatepickerModule.forRoot(),
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+    }),
     AppRoutingModule,
     HttpClientModule,
     FormsModule,

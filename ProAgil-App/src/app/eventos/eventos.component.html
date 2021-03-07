@@ -75,7 +75,7 @@
       </td>
     </tr>
   </tbody>
-  <tfoot *ngIf="!eventosFiltrados.length">
+  <tfoot *ngIf="!eventosFiltrados">
     <tr>
       <td colspan="7" class="text-center">
         <h4>Nenhum evento encontrado</h4>
@@ -393,12 +393,12 @@
       			<p>{{bodyDeletarEvento}}</p>
     		</div>    
     		<div class="modal-footer btn-group d-flex">      
-      			<button type="button" class="btn btn-outline-primary" (click)="confirm.hide()">
-        			CANCELAR
-      			</button>
       			<button type="button" class="btn btn-outline-danger" (click)="confirmeDelete(confirm)">
-              EXCLUIR
+              Excluir
         		</button>
+      			<button type="button" class="btn btn-outline-primary" (click)="confirm.hide()">
+        			Cancelar
+      			</button>
     		</div>
   		</div>
 	</div>
