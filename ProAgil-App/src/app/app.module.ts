@@ -13,19 +13,24 @@ import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { ToastrModule } from 'ngx-toastr';
 // Components
 import { AppComponent } from './app.component';
+import { ContatosComponent } from './contatos/contatos.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 import { EventosComponent } from './eventos/eventos.component';
 import { NavComponent } from './nav/nav.component';
-// Pipes
-import { DateTimeFormatPipePipe } from './helpers/DateTimeFormatPipe.pipe';
+import { PalestrantesComponent } from './palestrantes/palestrantes.component';
+import { TituloComponent } from './shared/titulo/titulo.component';
 // Services
 import { EventoService } from './services/evento.service';
 
 @NgModule({
-  declarations: [
+  declarations: [			
     AppComponent,
+    ContatosComponent,
+    DashboardComponent,
     EventosComponent,
     NavComponent,
-    DateTimeFormatPipePipe
+    PalestrantesComponent,
+    TituloComponent
    ],
   imports: [
     BrowserModule,
