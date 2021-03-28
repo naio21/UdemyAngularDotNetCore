@@ -64,6 +64,10 @@ export class EventosComponent implements OnInit {
     this.openModal(template);
   }
 
+  onFileChange(event: Event) {
+    console.log(event);
+  }
+
   openModal(template: any) {
     this.registerForm.reset();
     template.show();

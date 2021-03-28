@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using ProAgil.Domain;
 using ProAgil.Repository;
 using System;
+using System.IO;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace ProAgil.WebAPI.Controllers
@@ -24,6 +26,32 @@ namespace ProAgil.WebAPI.Controllers
             try
             {
                 return Ok(await _repo.GetAllPalestrantesAsync(true));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> Upload()
+        {
+            try
+            {
+                string destination = Path.Combine(Directory.GetCurrentDirectory(), Path.Combine("Resources", "Images"));
+                var file = Request.Form.Files[0];
+                if(file.Length > 0)
+                {
+                    string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName;
+                    destination = Path.Combine(destination, fileName.Replace("\"", " ").Trim());
+                    using (FileStream stream = new FileStream(destination, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                        
+                    }
+
+                }
+                return Ok();
             }
             catch (Exception ex)
             {
