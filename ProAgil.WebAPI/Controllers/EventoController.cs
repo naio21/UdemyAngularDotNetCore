@@ -5,6 +5,7 @@ using ProAgil.Domain;
 using ProAgil.Repository;
 using ProAgil.WebAPI.DTOs;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -128,5 +129,31 @@ namespace ProAgil.WebAPI.Controllers
             }
             return BadRequest();
         }
-    }
+ 
+        [HttpPost("upload")]
+        public async Task<IActionResult> Upload()
+        {
+            try
+            {
+                string destination = Path.Combine(Directory.GetCurrentDirectory(), Path.Combine("Resources", "Images"));
+                var file = Request.Form.Files[0];
+                if(file.Length > 0)
+                {
+                    string fileName = file.FileName;
+                    destination = Path.Combine(destination, fileName.Replace("\"", " ").Trim());
+                    using (FileStream stream = new FileStream(destination, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                        
+                    }
+
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+   }
 }

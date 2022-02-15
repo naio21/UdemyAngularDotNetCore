@@ -27,6 +27,14 @@ export class EventoService {
     return this.http.post(this.baseUrl, evento);
   }
 
+  postUpload(files: File) {
+    const fileList = files as any;
+    const fileToUpload = <File>fileList[0];
+    const data = new FormData();
+    data.append('imagem', fileToUpload, fileToUpload.name);
+    return this.http.post(`${this.baseUrl}/upload`, data);
+  }
+  
   putEvento(evento: Evento) {
     return this.http.put(`${this.baseUrl}/${evento.id}`, evento);
   }

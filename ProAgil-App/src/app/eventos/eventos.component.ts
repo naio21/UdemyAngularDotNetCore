@@ -26,6 +26,7 @@ export class EventosComponent implements OnInit {
   imagemMargem = 2;
   mostrarImagem = false;
   registerForm!: FormGroup;
+  files!: File;
 
   _filtroLista = '';
   get filtroLista(): string {
@@ -64,8 +65,11 @@ export class EventosComponent implements OnInit {
     this.openModal(template);
   }
 
-  onFileChange(event: Event) {
-    console.log(event);
+  onFileChange(event: any) {
+    const reader = new FileReader();
+    if(event.target.files != null && event.target.files.length > 0) {
+      this.files = event.target.files;
+    }
   }
 
   openModal(template: any) {
@@ -94,6 +98,12 @@ export class EventosComponent implements OnInit {
 
   salvarAlteracao(template: any) {
     if (this.registerForm.valid) {
+      this.eventoService.postUpload(this.files).subscribe;
+      // o caminho do arquivo sempre vai possuir um diretório "fake". P. ex.: C:\xpto\imagem.jpg
+      console.log(this.evento.imagemURL);
+      const nomeArquivo = this.evento.imagemURL.split('\\', 3);
+      console.log(nomeArquivo);
+      this.evento.imagemURL = nomeArquivo[2];
       if (this.modoSalvar === 'put') {
         this.evento = Object.assign(
           { id: this.evento.id },
